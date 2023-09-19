@@ -43,9 +43,10 @@
 const mongoose = require('mongoose')
 const redis = require('redis');
 const util = require('util');
+const keys = require('../config/keys')
 
-const redisUrl = 'redis://127.0.0.1:6379'
-const client = redis.createClient(redisUrl);
+// const redisUrl = 'redis://127.0.0.1:6379'
+const client = redis.createClient(keys.redisUrl);
 client.hget = util.promisify(client.hget);
 
 const exec = mongoose.Query.prototype.exec;
@@ -58,9 +59,9 @@ mongoose.Query.prototype.cache = function(options = {}) {
 }
 
 mongoose.Query.prototype.exec = async function() {
-    // console.log('this', this)
+
     let operation = this.op
-    // console.log('this', this)
+
     console.log('operation', operation)
     console.log('this.op', this.op)
 
@@ -82,8 +83,6 @@ mongoose.Query.prototype.exec = async function() {
         doc.map(d => new this.model(d)) 
         : new this.model(doc)
         
-        console.log(this)
-        return JSON.parse(cachedValue)
     }
 
     console.log(key);
@@ -97,4 +96,4 @@ module.exports = {
     clearHash(hashKey){
       client.del(JSON.stringify(hashKey));
     }
-  }
+}

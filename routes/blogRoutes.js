@@ -28,7 +28,7 @@ module.exports = app => {
     });
 
     try {
-      await blog.save().cache({ key: req.user.id });
+      await blog.save()
       res.status(200).send(blog);
     } catch (err) { 
       console.log(err)
